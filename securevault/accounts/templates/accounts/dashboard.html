@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="SecureVault Dashboard - Upload and manage your encrypted files securely." />
+  <title>Dashboard | SecureVault</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      width: 90%;
+      max-width: 900px;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      flex-direction: column;
+    }
+
+    .navbar {
+      background: #ffffff;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo i {
+      font-size: 26px;
+      color: #ff6a88;
+    }
+
+    .logo h2 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ff6a88;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    .logout-button {
+      background: #ff4f5a;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .logout-button:hover {
+      background: #e63d4a;
+    }
+
+    .dashboard-container {
+      padding: 30px 20px;
+    }
+
+    .welcome-card {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .welcome-card h2 {
+      font-size: 26px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .welcome-card p {
+      color: #666;
+      font-size: 15px;
+    }
+
+    .dashboard-card {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    form button {
+      background-color: #ff6a88;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    form button:hover {
+      background-color: #ff4d6d;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+    }
+
+    ul li {
+      margin: 10px 0;
+      font-size: 15px;
+      transition: color 0.2s;
+    }
+
+    ul li i {
+      margin-right: 8px;
+      color: #ff6a88;
+    }
+
+    .decrypt-link {
+      cursor: pointer;
+      color: #007bff;
+      text-decoration: underline;
+    }
+
+    .decrypt-link:hover {
+      color: #0056b3;
+    }
+
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: red;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .message {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #888;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .navbar, .dashboard-container {
+        padding: 20px;
+        flex-direction: column;
+      }
+
+      .user-menu {
+        margin-top: 10px;
+        flex-direction: column;
+      }
+
+      .dashboard-card {
+        padding: 15px;
+      }
+    }
+    /* Full CSS retained from your code — unchanged for brevity */
+    /* Everything inside your <style> block is okay and reused */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="navbar">
+      <div class="logo">
+        <i class="fas fa-shield-alt"></i>
+        <h2>SecureVault</h2>
+      </div>
+      <div class="user-menu">
+        <div class="user-avatar">
+          {{ user.username|first|upper }}
+        </div>
+        <span>{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-button">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <div class="dashboard-container">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="welcome-card">
+        <h2>Welcome, {{ user.username }}</h2>
+        <p>This is your personalized SecureVault dashboard. You can upload and view your files here.</p>
+      </div>
+
+      <!-- Upload File Form -->
+      <div class="dashboard-card">
+        <div class="card-title">Upload a New File</div>
+        <form method="post" enctype="multipart/form-data" id="uploadForm">
+          {% csrf_token %}
+
+          <label for="id_encrypted_file">File to Encrypt</label>
+          {{ upload_form.encrypted_file }}
+          {% if upload_form.encrypted_file.errors %}
+            <div class="error">{{ upload_form.encrypted_file.errors.0 }}</div>
+          {% endif %}
+
+          <label for="id_stegano_image" style="margin-top: 15px;">Carrier Image (JPEG or PNG)</label>
+          {{ upload_form.stegano_image }}
+          {% if upload_form.stegano_image.errors %}
+            <div class="error">{{ upload_form.stegano_image.errors.0 }}</div>
+          {% endif %}
+
+          <p class="note">Allowed formats: PDF, ZIP, JPEG, PNG | Max size: 5MB each</p>
+          <button type="submit">Upload</button>
+        </form>
+      </div>
+
+      <!-- Uploaded Files List -->
+      <div class="dashboard-card">
+        <div class="card-title">Your Uploaded Files</div>
+        <ul>
+          {% for file in user_files %}
+            {% if file.encrypted_file %}
+              <li>
+                <i class="fas fa-file-alt"></i>
+                <span class="decrypt-link" data-file-id="{{ file.id }}">
+                  {{ file.encrypted_file.name|cut:"user_files/" }}
+                </span>
+                <small style="color: #888;">({{ file.uploaded_at|date:"M d, Y H:i" }})</small>
+
+                <!-- Decrypt form specific to this file -->
+                <form id="decryptForm_{{ file.id }}" action="{% url 'decrypt_file' file_id=file.id %}" method="post" enctype="multipart/form-data" style="display: none;">
+                  {% csrf_token %}
+                  <input type="hidden" name="file_id" value="{{ file.id }}" />
+                  <input type="file" name="stego_image" accept=".jpg,.jpeg,.png" />
+                </form>
+              </li>
+            {% else %}
+              <li>
+                <i class="fas fa-file-alt" style="color: gray;"></i>
+                <span style="color: gray;">[Missing File]</span>
+              </li>
+            {% endif %}
+          {% empty %}
+            <li>No file uploaded yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const decryptLinks = document.querySelectorAll('.decrypt-link');
+        const uploadForm = document.getElementById('uploadForm');
+        const filesList = document.querySelector('.dashboard-card ul');
+    
+        // Function to add new file to the list
+        function addFileToList(fileData) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <i class="fas fa-file-alt"></i>
+                <span class="decrypt-link" data-file-id="${fileData.id}">
+                    ${fileData.original_name || fileData.name}
+                </span>
+                <small style="color: #888;">(${fileData.uploaded_at})</small>
+                <form id="decryptForm_${fileData.id}" 
+                      action="/accounts/decrypt/${fileData.id}/" 
+                      method="post" 
+                      enctype="multipart/form-data" 
+                      style="display: none;">
+                    {% csrf_token %}
+                    <input type="hidden" name="file_id" value="${fileData.id}" />
+                    <input type="file" name="stego_image" accept=".jpg,.jpeg,.png" />
+                </form>
+            `;
+            
+            // If "No file uploaded yet" message exists, remove it
+            const noFilesMessage = filesList.querySelector('li:only-child');
+            if (noFilesMessage && noFilesMessage.textContent.trim() === 'No file uploaded yet.') {
+                noFilesMessage.remove();
+            }
+    
+            // Add the new file to the top of the list
+            filesList.insertBefore(li, filesList.firstChild);
+    
+            // Add click handler for the new decrypt link
+            const newDecryptLink = li.querySelector('.decrypt-link');
+            addDecryptLinkHandler(newDecryptLink);
+        }
+    
+        // Function to trigger download
+        function triggerDownload(url) {
+            // Add accounts prefix if not already present
+            if (!url.startsWith('/accounts/')) {
+                url = '/accounts' + url;
+            }
+            const link = document.createElement('a');
+            link.href = url;
+            link.style.display = 'none';
+            link.setAttribute('download', ''); // Force download
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                document.body.removeChild(link);
+            }, 100);
+        }
+    
+        // Function to add decrypt link handler
+        function addDecryptLinkHandler(link) {
+            link.addEventListener('click', function () {
+                const fileId = this.getAttribute('data-file-id');
+                const form = document.getElementById(`decryptForm_${fileId}`);
+                const stegoInput = form.querySelector('input[type="file"]');
+                
+                stegoInput.click();
+                
+                stegoInput.addEventListener('change', function () {
+                    if (this.files.length > 0) {
+                        form.submit();
+                    }
+                }, { once: true }); // Only trigger once per file selection
+            });
+        }
+    
+        // Handle form submission
+        uploadForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+    
+            // Validate files before submission
+            const encrypted = document.getElementById('id_encrypted_file')?.files[0];
+            const stego = document.getElementById('id_stegano_image')?.files[0];
+            const allowedTypes = ['application/pdf', 'application/zip', 'image/jpeg', 'image/png'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+    
+            if (!encrypted || !stego) {
+                alert('Please select both files.');
+                return;
+            }
+    
+            if (!allowedTypes.includes(encrypted.type) || encrypted.size > maxSize) {
+                alert('Invalid encrypted file. Check format and size.');
+                return;
+            }
+    
+            if (!allowedTypes.includes(stego.type) || stego.size > maxSize) {
+                alert('Invalid image file. Check format and size.');
+                return;
+            }
+    
+            // Create FormData object
+            const formData = new FormData(this);
+            formData.append('user', 'mudit-ctrl'); // Add current user
+            formData.append('timestamp', '2025-04-06 11:38:22'); // Add current timestamp
+    
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.textContent = 'Uploading...';
+            submitButton.disabled = true;
+    
+            // Remove any existing messages
+            const existingMessages = document.querySelectorAll('.message');
+            existingMessages.forEach(msg => msg.remove());
+    
+            // Send AJAX request
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // Add the new file to the list
+                    addFileToList(data.file_data);
+                    
+                    // Show success message
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = data.message;
+                    const container = document.querySelector('.dashboard-container');
+                    container.insertBefore(messageDiv, container.firstChild);
+                    
+                    // Clear the form and any file input labels
+                    uploadForm.reset();
+                    const fileLabels = uploadForm.querySelectorAll('label[for^="id_"]');
+                    fileLabels.forEach(label => {
+                        label.textContent = label.getAttribute('data-default-text') || 'Choose file';
+                    });
+    
+                    // Trigger download of stego image with retry
+                    if (data.download_url) {
+                        let retryCount = 0;
+                        const tryDownload = () => {
+                            if (retryCount < 3) {
+                                setTimeout(() => {
+                                    triggerDownload(data.download_url);
+                                    retryCount++;
+                                }, 500 * (retryCount + 1)); // Increasing delay for each retry
+                            }
+                        };
+                        tryDownload();
+                    }
+    
+                    // Remove success message after 5 seconds
+                    setTimeout(() => messageDiv.remove(), 5000);
+                } else {
+                    throw new Error(data.message || 'Upload failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message error';
+                messageDiv.textContent = error.message || 'An error occurred during upload.';
+                const container = document.querySelector('.dashboard-container');
+                container.insertBefore(messageDiv, container.firstChild);
+                
+                // Remove error message after 5 seconds
+                setTimeout(() => messageDiv.remove(), 5000);
+            })
+            .finally(() => {
+                // Reset button state
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+            });
+        });
+    
+        // Add handlers to existing decrypt links
+        decryptLinks.forEach(link => addDecryptLinkHandler(link));
+    
+        // Add file input change handlers for visual feedback
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            const label = input.previousElementSibling;
+            if (label) {
+                label.setAttribute('data-default-text', label.textContent);
+                input.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        label.textContent = this.files[0].name;
+                    } else {
+                        label.textContent = label.getAttribute('data-default-text');
+                    }
+                });
+            }
+        });
+    
+        // Initialize upload timestamp
+        document.querySelector('form').dataset.uploadTime = new Date('2025-04-06T11:38:22Z').toISOString();
+    });
+    </script>
+  
+</body>
+</html>
